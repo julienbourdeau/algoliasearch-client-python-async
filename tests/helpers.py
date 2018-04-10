@@ -6,6 +6,7 @@ from faker import Factory
 
 from algoliasearchasync.client import ClientAsync
 
+is_community = 'IS_COMMUNITY' in os.environ
 
 class FakeData(object):
     def __init__(self):
@@ -45,10 +46,14 @@ def safe_index_name(name):
     if 'TRAVIS' not in os.environ:
         return name
     job = os.environ['TRAVIS_JOB_NUMBER']
-    return '{0}_travis-{1}'.format(name, job)
+    return 'TRAVIS_PYTHONasync_{0}-id-{1}'.format(name, job)
 
 
 def wait_key(index, key, block=None):
+    if is_community:
+        time.sleep(60)
+        return
+
     for i in range(60):
         try:
             k = index.get_user_key_acl(key)
@@ -61,6 +66,10 @@ def wait_key(index, key, block=None):
 
 
 def wait_missing_key(index, key):
+    if is_community:
+        time.sleep(60)
+        return
+
     for i in range(60):
         try:
             index.get_user_key_acl(key)

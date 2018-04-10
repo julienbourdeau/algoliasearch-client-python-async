@@ -2,19 +2,22 @@ import asyncio
 import unittest
 from random import randint
 
+from .helpers import is_community
 from .helpers import safe_index_name
 from .helpers import get_api_client
 from .helpers import FakeData
 from .helpers import wait_key, wait_missing_key
 
 
+@unittest.skipIf(is_community,
+                 'API keys methods cannot be tested by the community')
 class KeyTest(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         cls.loop = asyncio.get_event_loop()
         cls.client = get_api_client()
         cls.index_name = safe_index_name('àlgol?à-python-async{0}'.format(
-                                         randint(1, 1000)))
+            randint(1, 1000)))
         cls.index = cls.client.init_index(cls.index_name)
         cls.client.delete_index(cls.index_name)
 
